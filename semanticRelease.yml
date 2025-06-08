@@ -1,0 +1,22 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - checkout: self
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Instala Node.js'
+
+  - script: |
+      npm install -g semantic-release @semantic-release/git @semantic-release/github @semantic-release/changelog @semantic-release/commit-analyzer @semantic-release/release-notes-generator
+      npx semantic-release
+    env:
+      GITHUB_TOKEN: $(GITHUB_TOKEN)
+    displayName: 'Ejecuta Semantic Release'
