@@ -1,4 +1,4 @@
-name: Release
+name: Semantic Release
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   release:
-    name: Semantic Release
+    name: Semantic Versioning
     runs-on: ubuntu-latest
 
     steps:
@@ -17,11 +17,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '18'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install --no-save semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github @semantic-release/commit-analyzer @semantic-release/release-notes-generator
+        run: npm ci
 
       - name: Run semantic-release
         env:
