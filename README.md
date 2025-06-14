@@ -16,7 +16,87 @@ Este taller tiene como propósito guiar el desarrollo de una arquitectura de mic
 - **Asegurar observabilidad y trazabilidad** con herramientas de monitoreo distribuido, facilitando la detección y resolución de problemas en entornos complejos.
 - **Centralizar la gestión de configuración** para mantener la coherencia y flexibilidad en todos los entornos.
 
-### 1.2 Microservicios Seleccionados y Justificación
+### 1.2 Metodología Ágil: Scrum
+
+El desarrollo de este proyecto se realiza siguiendo la **metodología ágil Scrum**, permitiendo una gestión iterativa e incremental del trabajo, con entregas frecuentes y retroalimentación continua. El proyecto se planifica en **2 sprints**, cada uno con objetivos claros y entregables definidos, asegurando la culminación exitosa del sistema en el tiempo estimado.
+
+- **Sprint 1:** Enfocado en la arquitectura base, configuración de infraestructura, despliegue inicial de microservicios y pruebas unitarias/integración.
+- **Sprint 2:** Orientado a la integración completa, pruebas E2E, optimización, pruebas de rendimiento y despliegue final en producción.
+
+Esta estructura facilita la adaptación a cambios, la colaboración entre los miembros del equipo y la entrega continua de valor.
+
+---
+
+### 1.3 Herramienta de Gestión Ágil: Jira
+
+Para la gestión y seguimiento de la metodología Scrum, se utiliza **Jira** como herramienta principal. Jira permite organizar y visualizar el backlog, las historias de usuario, tareas técnicas y el avance de los sprints, proporcionando transparencia y control sobre el progreso del proyecto.
+
+- **Configuración del proyecto en Jira:**
+    ![Configuración del proyecto en Jira](images/jira_project_setup.png)
+
+- **Historias de usuario y backlog:**
+    ![Historias de usuario en Jira](images/jira_user_stories1.png)
+    ![Historias de usuario en Jira](images/jira_user_stories2.png)
+    ![Historias de usuario en Jira](images/jira_user_stories3.png)
+    ![Historias de usuario en Jira](images/jira_user_stories4.png)
+    ![Historias de usuario en Jira](images/jira_user_stories5.png)
+
+- **Sprints inicializados y tablero Scrum:**
+  ![Sprint en Jira](images/jira_sprint_board.png)
+
+Estos espacios permiten documentar visualmente la organización y el avance del proyecto, facilitando la comunicación y la toma de decisiones dentro del equipo.
+
+---
+
+### 1.4 Estrategia de Branching
+
+Para garantizar un flujo de trabajo ordenado, colaborativo y seguro, el repositorio implementa una **estrategia de branching GitHub Flow** basada en las mejores prácticas de integración y entrega continua. Esta estrategia permite aislar el desarrollo de nuevas funcionalidades, facilitar pruebas en diferentes entornos y asegurar la estabilidad del código en producción.
+
+#### Ramas principales del repositorio
+
+- **master**
+  - Es la rama principal y representa el entorno de **producción**.
+  - Solo recibe cambios validados y probados, generalmente mediante pull requests desde `stage`.
+  - Cada despliegue a producción se realiza desde esta rama.
+- **stage**
+  - Rama intermedia destinada al entorno de **staging**.
+  - Aquí se integran y prueban los cambios antes de ser promovidos a producción.
+  - Recibe merges desde `dev` y es utilizada para pruebas end-to-end, integración y rendimiento.
+- **dev**
+  - Rama de **desarrollo** activo.
+  - Todos los desarrolladores integran aquí sus cambios antes de pasar a `stage`.
+  - Es el espacio para validación temprana, pruebas unitarias y de integración.
+
+#### Ramas de soporte
+
+- **feature/\***
+  - Para cada nueva funcionalidad o mejora, se crea una rama `feature/nombre-funcionalidad` a partir de `dev`.
+  - Permite el desarrollo aislado de nuevas características sin afectar la estabilidad de las ramas principales.
+  - Una vez completada y revisada, la rama feature se fusiona de vuelta a `dev` mediante pull request.
+
+#### Flujo de trabajo
+
+1. **Crear rama feature:**
+   - Desde `dev`, crear una rama `feature/nueva-funcionalidad`.
+2. **Desarrollar y probar localmente:**
+   - Realizar commits y pruebas en la rama feature.
+3. **Merge a dev:**
+   - Al finalizar, abrir un pull request hacia `dev` para revisión y pruebas unitarias/integración.
+4. **Promover a stage:**
+   - Una vez validados los cambios en `dev`, se realiza merge a `stage` para pruebas E2E y de rendimiento.
+5. **Despliegue a producción:**
+   - Tras la validación en `stage`, los cambios se fusionan a `master` para el despliegue final.
+
+#### Beneficios de la estrategia
+
+- Permite desarrollo paralelo y seguro de nuevas funcionalidades.
+- Facilita la integración y pruebas en diferentes entornos antes de llegar a producción.
+- Minimiza riesgos de errores en producción y mejora la trazabilidad de cambios.
+- Compatible con pipelines CI/CD automatizados para cada rama.
+
+---
+
+### 1.5 Microservicios Seleccionados y Justificación
 
 La arquitectura está compuesta por **10 microservicios principales** y **3 servicios de infraestructura**, cada uno diseñado para cumplir una responsabilidad específica dentro del ecosistema de comercio electrónico:
 
@@ -46,7 +126,7 @@ La arquitectura está compuesta por **10 microservicios principales** y **3 serv
 | **proxy-client** | - | Cliente proxy para comunicación entre servicios. Abstrae la comunicación HTTP y maneja circuit breakers. |
 | **zipkin** | 9411 | Trazabilidad distribuida. Esencial para debugging y monitoring de requests que atraviesan múltiples servicios. |
 
-### 1.3 Herramientas y Tecnologías Utilizadas
+### 1.6 Herramientas y Tecnologías Utilizadas
 
 #### 🔧 Desarrollo y Framework
 - **Spring Boot**: Framework principal para el desarrollo de microservicios Java
@@ -100,7 +180,337 @@ El siguiente diagrama ilustra la arquitectura lógica del sistema, mostrando la 
 - **Zipkin:** Proporciona trazabilidad distribuida, esencial para el monitoreo y la depuración de flujos complejos.
 - **Microservicios de negocio:** Interactúan mediante llamadas HTTP internas, gestionadas por el API Gateway y el Service Discovery, asegurando independencia y escalabilidad.
 
-### 2.3 Ambientes Definidos
+## 2. Arquitectura General
+
+### 2.1 Diagrama de Arquitectura de Microservicios
+
+El siguiente diagrama ilustra la arquitectura lógica del sistema, mostrando la interacción entre microservicios, servicios de infraestructura y componentes de soporte. Esta visión global facilita la comprensión de los flujos de datos, la resiliencia y la escalabilidad del sistema.
+
+![Diagrama de Arquitectura](app-architecture.drawio.png)
+
+### 2.2 Interacciones entre los Servicios
+
+- **API Gateway:** Punto de entrada único, gestiona autenticación, balanceo de carga y enrutamiento inteligente.
+- **Service Discovery (Eureka):** Permite el registro y descubrimiento dinámico de servicios, facilitando la escalabilidad y tolerancia a fallos.
+- **Cloud Config:** Centraliza la configuración, permitiendo cambios sin redespliegue y manteniendo la coherencia entre entornos.
+- **Proxy Client:** Abstrae la comunicación HTTP y gestiona circuit breakers, mejorando la resiliencia.
+- **Zipkin:** Proporciona trazabilidad distribuida, esencial para el monitoreo y la depuración de flujos complejos.
+- **Microservicios de negocio:** Interactúan mediante llamadas HTTP internas, gestionadas por el API Gateway y el Service Discovery, asegurando independencia y escalabilidad.
+
+
+### 2.3 Patrones de Diseño en la Nube Implementados
+
+La arquitectura implementa varios **Cloud Design Patterns** que garantizan escalabilidad, resiliencia y mantenibilidad:
+
+#### Service Discovery Pattern
+Permite que los microservicios se registren y descubran dinámicamente.
+- **Implementación:** Eureka.
+- **Ejemplo:**
+order-service
+  [`@EnableEurekaClient`](order-service/src/main/java/com/selimhorri/app/OrderServiceApplication.java#L7)
+  
+  ```java
+  @SpringBootApplication
+  @EnableEurekaClient
+  public class OrderServiceApplication {
+    
+    public static void main(String[] args) {
+      SpringApplication.run(OrderServiceApplication.class, args);
+    }
+  }
+  ```
+  user-service
+  [`@EnableEurekaClient`](user-service/src/main/java/com/selimhorri/app/UserServiceApplication.java#L7)
+  
+  ```java
+  @SpringBootApplication
+  @EnableEurekaClient
+  public class UserServiceApplication {
+
+    public static void main(String[] args) {
+      SpringApplication.run(UserServiceApplication.class, args);
+    }
+  }
+  ```
+  product-service
+  [`@EnableEurekaClient`](product-service/src/main/java/com/selimhorri/app/ProductServiceApplication.java#L7)
+
+  ```java
+  @SpringBootApplication
+  @EnableEurekaClient
+  public class ProductServiceApplication {
+
+    public static void main(String[] args) {
+      SpringApplication.run(ProductServiceApplication.class, args);
+    }
+  }
+  ```
+
+#### API Gateway Pattern
+Punto de entrada único para clientes, maneja enrutamiento y autenticación.
+- **Implementación:** Microservicio [`api-gateway`](api-gateway/).
+- **Referencia:** [k8s/api-gateway/deployment.yaml](k8s/api-gateway/deployment.yaml)
+
+#### Centralized Configuration Pattern
+Gestión centralizada de configuración para todos los servicios.
+- **Implementación:** Spring Cloud Config.
+- **Ejemplo:**
+  [`@EnableConfigServer`](cloud-config/src/main/java/com/selimhorri/app/CloudConfigApplication.java#L7)
+  ```java
+  @SpringBootApplication
+  @EnableEurekaClient
+  @EnableConfigServer
+  public class CloudConfigApplication {
+    
+    public static void main(String[] args) {
+      SpringApplication.run(CloudConfigApplication.class, args);
+    }
+  }
+  ```
+
+#### Client-Side Load Balancing Pattern
+Balanceo de carga entre instancias de servicios.
+- **Implementación:** `@LoadBalanced` en RestTemplate.
+- **Ejemplo:**
+  [`@LoadBalanced`](proxy-client/src/main/java/com/selimhorri/app/config/template/TemplateConfig.java#L8)
+  ```java
+  @Configuration
+  public class TemplateConfig {
+    
+    @LoadBalanced
+    @Bean
+    public RestTemplate restTemplateBean() {
+      return new RestTemplate();
+    }
+  }
+  ```
+
+#### Circuit Breaker / Resilience Pattern
+Previene fallos en cascada y mejora la resiliencia.
+- **Implementación:** Feign Client preparado para circuit breakers.
+- **Ejemplo:**
+  ProductClientService
+  [`@FeignClient`](proxy-client/src/main/java/com/selimhorri/app/business/product/service/ProductClientService.java#L13)
+    ```java
+  @FeignClient(name = "PRODUCT-SERVICE", contextId = "productClientService", path = "/product-service/api/products")
+  public interface ProductClientService {
+    
+    @GetMapping
+    ResponseEntity<ProductProductServiceCollectionDtoResponse> findAll();
+    
+    @GetMapping("/{productId}")
+    ResponseEntity<ProductDto> findById(
+        @PathVariable("productId") 
+        @NotBlank(message = "Input must not be blank!") 
+        @Valid final String productId);
+    
+    @PostMapping
+    ResponseEntity<ProductDto> save(
+        @RequestBody 
+        @NotNull(message = "Input must not be NULL!") 
+        @Valid final ProductDto productDto);
+    
+    [...]
+    
+  }
+  ```
+
+  OrderClientService
+  [`@FeignClient`](proxy-client/src/main/java/com/selimhorri/app/business/order/service/OrderClientService.java#L13)
+
+  ```java
+  @FeignClient(name = "ORDER-SERVICE", contextId = "orderClientService", path = "/order-service/api/orders")
+  public interface OrderClientService {
+    
+    @GetMapping
+    public ResponseEntity<OrderOrderServiceDtoCollectionResponse> findAll();
+    
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDto> findById(
+        @PathVariable("orderId") 
+        @NotBlank(message = "Input must not be blank!") 
+        @Valid final String orderId);
+    
+    @PostMapping
+    public ResponseEntity<OrderDto> save(
+        @RequestBody 
+        @NotNull(message = "Input must not be NULL!") 
+        @Valid final OrderDto orderDto);
+    
+    [...]
+    
+  }
+  ```
+
+#### Proxy Pattern
+Desacopla la lógica de negocio de la comunicación entre servicios.
+- **Implementación:** Microservicio [`proxy-client`](proxy-client/).
+- **Ejemplo:**
+  [`ProductClientService.java`](proxy-client/src/main/java/com/selimhorri/app/business/product/service/ProductClientService.java)
+  [`OrderClientService.java`](proxy-client/src/main/java/com/selimhorri/app/business/order/service/OrderClientService.java)
+
+#### Sidecar Pattern (Observability)
+Agrega monitoreo y trazabilidad sin modificar el código principal.
+- **Implementación:** Zipkin.
+- **Referencia:** [`zipkin/`](zipkin/)
+
+#### Containerization & Orchestration
+Portabilidad y gestión automatizada de microservicios.
+- **Implementación:** Docker y Kubernetes.
+- **Referencia:**
+  [`Dockerfile` de cada microservicio](product-service/Dockerfile)
+  [`k8s/`](k8s/)
+
+#### Health Check Pattern
+Monitoreo y reinicio automático de servicios no saludables.
+- **Implementación:** Health checks en manifiestos de Kubernetes.
+- **Referencia:**
+  [`k8s/api-gateway/deployment.yaml`](k8s/api-gateway/deployment.yaml)
+
+  ```java
+    [...]
+
+       livenessProbe:
+         httpGet:
+           path: /actuator/health
+           port: 8080
+         initialDelaySeconds: 90
+         periodSeconds: 10
+         failureThreshold: 3
+       readinessProbe:
+         httpGet:
+           path: /actuator/health
+           port: 8080
+         initialDelaySeconds: 60
+         periodSeconds: 5
+         failureThreshold: 3
+       volumeMounts:
+       - name: common-config-volume
+         mountPath: /app/config
+     volumes:
+     - name: common-config-volume
+       configMap:
+         name: common-config
+  ```
+
+  [`k8s/order-service/deployment.yaml`](k8s/order-service/deployment.yaml)
+
+    ```java
+    [...]
+
+        livenessProbe:
+          httpGet:
+            path: /order-service/actuator/health
+            port: 8300
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /order-service/actuator/health
+            port: 8300
+          initialDelaySeconds: 60
+          periodSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: common-config-volume
+          mountPath: /app/config
+      volumes:
+      - name: common-config-volume
+        configMap:
+          name: common-config 
+  ```
+
+#### Externalized Configuration Pattern
+Uso de constantes y variables externas para endpoints y configuración.
+- **Ejemplo:**
+  [`AppConstant.DiscoveredDomainsApi`](shipping-service/src/main/java/com/selimhorri/app/constant/AppConstant.java#L16-L36)
+
+  ```java
+  @NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public abstract class DiscoveredDomainsApi {
+		
+		public static final String USER_SERVICE_HOST = "http://USER-SERVICE/user-service";
+		public static final String USER_SERVICE_API_URL = "http://USER-SERVICE/user-service/api/users";
+		
+		public static final String PRODUCT_SERVICE_HOST = "http://PRODUCT-SERVICE/product-service";
+		public static final String PRODUCT_SERVICE_API_URL = "http://PRODUCT-SERVICE/product-service/api/products";
+		
+		public static final String ORDER_SERVICE_HOST = "http://ORDER-SERVICE/order-service";
+		public static final String ORDER_SERVICE_API_URL = "http://ORDER-SERVICE/order-service/api/orders";
+		
+		public static final String FAVOURITE_SERVICE_HOST = "http://FAVOURITE-SERVICE/favourite-service";
+		public static final String FAVOURITE_SERVICE_API_URL = "http://FAVOURITE-SERVICE/favourite-service/api/favourites";
+		
+		public static final String PAYMENT_SERVICE_HOST = "http://PAYMENT-SERVICE/payment-service";
+		public static final String PAYMENT_SERVICE_API_URL = "http://PAYMENT-SERVICE/payment-service/api/payments";
+		
+		public static final String SHIPPING_SERVICE_HOST = "http://SHIPPING-SERVICE/shipping-service";
+		public static final String SHIPPING_SERVICE_API_URL = "http://SHIPPING-SERVICE/shipping-service/api/shippings";
+		
+	}
+  ```
+
+  [`AppConstant.DiscoveredDomainsApi`](product-service/src/main/java/com/selimhorri/app/constant/AppConstant.java#L16-L38)
+
+  ```java
+  	@NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public abstract class DiscoveredDomainsApi {
+		
+		public static final String USER_SERVICE_HOST = "http://USER-SERVICE/user-service";
+		public static final String USER_SERVICE_API_URL = "http://USER-SERVICE/user-service/api/users";
+		
+		public static final String PRODUCT_SERVICE_HOST = "http://PRODUCT-SERVICE/product-service";
+		public static final String PRODUCT_SERVICE_API_URL = "http://PRODUCT-SERVICE/product-service/api/products";
+		
+		public static final String ORDER_SERVICE_HOST = "http://ORDER-SERVICE/order-service";
+		public static final String ORDER_SERVICE_API_URL = "http://ORDER-SERVICE/order-service/api/orders";
+		
+		public static final String FAVOURITE_SERVICE_HOST = "http://FAVOURITE-SERVICE/favourite-service";
+		public static final String FAVOURITE_SERVICE_API_URL = "http://FAVOURITE-SERVICE/favourite-service/api/favourites";
+		
+		public static final String PAYMENT_SERVICE_HOST = "http://PAYMENT-SERVICE/payment-service";
+		public static final String PAYMENT_SERVICE_API_URL = "http://PAYMENT-SERVICE/payment-service/api/payments";
+		
+		public static final String SHIPPING_SERVICE_HOST = "http://SHIPPING-SERVICE/shipping-service";
+		public static final String SHIPPING_SERVICE_API_URL = "http://SHIPPING-SERVICE/shipping-service/api/shippings";
+		
+	}
+  ```
+
+  [`AppConstant.DiscoveredDomainsApi`](order-service/src/main/java/com/selimhorri/app/constant/AppConstant.java#L16-L38)
+
+  ```java
+  @NoArgsConstructor(access = AccessLevel.PRIVATE)
+	public abstract class DiscoveredDomainsApi {
+		
+		public static final String USER_SERVICE_HOST = "http://USER-SERVICE/user-service";
+		public static final String USER_SERVICE_API_URL = "http://USER-SERVICE/user-service/api/users";
+		
+		public static final String PRODUCT_SERVICE_HOST = "http://PRODUCT-SERVICE/product-service";
+		public static final String PRODUCT_SERVICE_API_URL = "http://PRODUCT-SERVICE/product-service/api/products";
+		
+		public static final String ORDER_SERVICE_HOST = "http://ORDER-SERVICE/order-service";
+		public static final String ORDER_SERVICE_API_URL = "http://ORDER-SERVICE/order-service/api/orders";
+		
+		public static final String FAVOURITE_SERVICE_HOST = "http://FAVOURITE-SERVICE/favourite-service";
+		public static final String FAVOURITE_SERVICE_API_URL = "http://FAVOURITE-SERVICE/favourite-service/api/favourites";
+		
+		public static final String PAYMENT_SERVICE_HOST = "http://PAYMENT-SERVICE/payment-service";
+		public static final String PAYMENT_SERVICE_API_URL = "http://PAYMENT-SERVICE/payment-service/api/payments";
+		
+		public static final String SHIPPING_SERVICE_HOST = "http://SHIPPING-SERVICE/shipping-service";
+		public static final String SHIPPING_SERVICE_API_URL = "http://SHIPPING-SERVICE/shipping-service/api/shippings";
+		
+	}
+  ```
+
+
+---
+
+Estos patrones están presentes en la arquitectura y el código fuente del proyecto, asegurando una solución robusta, escalable y alineada con las mejores prácticas de la industria.
+
+### 2.4 Ambientes Definidos
 
 El ciclo de vida del software se gestiona a través de tres ambientes principales:
 
@@ -762,7 +1172,7 @@ En contraste, el payment-service evidenció limitaciones importantes bajo estré
 **Deploy Core Services**
 En la rama `master`, el pipeline despliega los servicios fundamentales en el siguiente orden:
 1. **Zipkin**: Sistema de trazabilidad distribuida
-2. **Service Discovery**: Servidor Eureka para registro de servicios  
+2. **Service Discovery**: Servidor Eureka para registro de servicios
 3. **Cloud Config**: Servidor de configuración centralizada
 
 Cada despliegue incluye `kubectl rollout status` con timeout de 300 y 500 segundos para verificar que el servicio esté completamente operativo.
@@ -773,7 +1183,7 @@ Cada despliegue incluye `kubectl rollout status` con timeout de 300 y 500 segund
 **Deploy Microservices**
 Posteriormente se despliegan los microservicios de negocio:
 - product-service
-- user-service  
+- user-service
 - order-service
 - payment-service
 - api-gateway
