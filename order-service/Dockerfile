@@ -6,6 +6,6 @@ ENV SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
 RUN mkdir -p /home/app
 WORKDIR /home/app
 # ENV SPRING_PROFILES_ACTIVE dev
-COPY target/order-service-v0.1.0.jar order-service.jar
+COPY order-service/target/order-service-v0.1.0.jar order-service.jar
 EXPOSE 8300
 ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-jar", "order-service.jar"]
